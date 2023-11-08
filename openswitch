@@ -1,1 +1,32 @@
+ASTRA
+apt update
+apt install openvswitch-switch
+systemctl enable --now openvswitch-switch
+ovs-vsctl show
+ovs-vsctl add-br SW1
+nano /etc/network/interfaces
+  iface <интерфейс> inet manual
+ovs-vsctl add-port <BRNAME> <PORTNAME> #ovs-vsctl add-port SW1 eth0
+ovs-vsctl set port <PORTNAME> tag=<TAG> #ovs-vsctl set port eth0 tag=100
+ovs-vsctl set port <PORTNAME> trunks=<TAGS> #ovs-vsctl set port eth0 tag=100
+ovs-vsctl add-port SW2 vlan300 -- set interface vlan300 type=internal
+ip addr add 10.0.20.203/27 dev vlan300
+ip route add default via 10.0.20.193
+ip link set up vlan300
+
+
+ALT
+apt-get update
+apt-get install openvswitch
+systemctl enable --now openvswitch
+ovs-vsctl show
+ovs-vsctl add-br SW1
+ovs-vsctl add-port <BRNAME> <PORTNAME> #ovs-vsctl add-port SW1 eth0
+ovs-vsctl set port <PORTNAME> tag=<TAG> #ovs-vsctl set port eth0 tag=100
+ovs-vsctl set port <PORTNAME> trunks=<TAGS> #ovs-vsctl set port eth0 tag=100
+ovs-vsctl add-port SW2 vlan300 -- set interface vlan300 type=internal
+ip addr add 10.0.20.203/27 dev vlan300
+ip route add default via 10.0.20.193
+ip link set up vlan300
+
 
