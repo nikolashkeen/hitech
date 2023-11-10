@@ -1,0 +1,32 @@
+https://about.gitlab.com/install/#debian
+
+#Installation Gitlab Server
+sudo apt-get update
+sudo apt-get install -y curl openssh-server ca-certificates perl
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+EXTERNAL_URL="https://gitlab.company.prof" apt-get install gitlab-ce
+cat /etc/gitlab/initial_root_password - пароль от root для гитлаб
+
+#Git Client
+git config --global user.name "user"
+git config --global user.email user@company.prof
+mkdir infra
+cd infra
+git init --initial-branch=main
+git remote add origin https://gitlab.company.prof/user/infrastructure
+git add .
+git push --set-upstream origin main
+
+#Git Runner
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh ./get-docker.sh
+
+#LDAP
+nano /etc/gitlab/gitlab.rb
+> gitlab_rails['ldap_enabled'] = true
+> gitlab_rails['ldap_servers'] = YAML.load <<-'EOS'
+
+#Docker runner
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh ./get-docker.sh
+
