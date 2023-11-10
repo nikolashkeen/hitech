@@ -1,10 +1,10 @@
 rtr-hq.company.prof 		|10.0.10.1
-sw-hq.company.prof		  	|
+sw-hq.company.prof		  |
 srv-hq.company.prof 		|10.0.10.2
 cli-hq.company.prof 		|10.0.10.34
 cicd-hq.company.prof 		|
-worker1-hq.company.prof		|
-worker2-hq.company.prof		|
+worker1-hq.company.prof	|
+worker2-hq.company.prof	|
 k8s-master-hq.company.prof	|
 k8s-worker1-hq.company.prof |
 k8s-worker2-hq.company.prof	|
