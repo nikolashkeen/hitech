@@ -2,3 +2,4 @@ hostnamectl set-hostname srv-hq.company.prof
 nano /etc/hosts
   10.0.10.2 srv-hq srv-hq.company.prof
 apt install astra-freeipa-server
+astra-freeipa-server -e
