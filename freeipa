@@ -3,3 +3,20 @@ nano /etc/hosts
   10.0.10.2 srv-hq srv-hq.company.prof
 apt install astra-freeipa-server
 astra-freeipa-server
+cat /tmp/ipa.system.records.*.db >> /etc/bind/company.prof
+reboot
+
+kinit admin
+klist
+ipa group-add group1
+ipa group-add group2
+ipa group-add group3
+
+nano ipausers.sh
+for i in $(seq 30); do
+    ipa -n user-add user$i --first user --last $i --password P@ssw0rd
+    if [[ $i = [1-9] ]] || [[ $i = "10" ]]; then ipa -n group-add-member group1 --users=user$i; fi
+    if [[ $i = 1[1-9] ]] || [[ $i = "20" ]]; then ipa -n group-add-member group2 --users=user$i; fi
+    if [[ $i = 2[1-9] ]] || [[ $i = "30" ]]; then ipa -n group-add-member group3 --users=user$i; fi
+done
+
