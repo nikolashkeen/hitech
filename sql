@@ -1,3 +1,4 @@
+ASTRA
 apt install postgresql
 su - postgres
 psql
@@ -23,3 +24,16 @@ su - postgres
 pgbench -i dev
 pgbench -i test
 pgbench -i prod
+
+ALT
+apt-get install postgresql11 postgresql11-server postgresql11-contrib
+/etc/init.d/postgresql initdb
+vim /var/lib/pgsql/data/postgresql.conf
+# Ищем строчку, которая начинается на listen, раскомментируем и прописываем *
+listen_addresses = '*'
+vim /var/lib/pgsql/data/pg_hba.conf
+Ищем строчку host со 127.0.0.1 и меняем на 0.0.0.0/0
+host all all 0.0.0.0/0 trust
+systemctl restart postgresql
+
+psql -U postgres
