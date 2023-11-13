@@ -1,0 +1,30 @@
+https://wiki.astralinux.ru/pages/viewpage.action?pageId=27362248
+
+apt install bind9
+  
+nano /etc/bind/named.conf.options
+      forwarders { 77.88.8.8; };
+      dnssec-validation no;
+      listen-on { any; };
+
+/etc/bind/named.conf.default-zones
+          zone "company.prof" {
+              type master;
+              file "/opt/dns/company.prof";
+          };
+          
+          zone "0.10.in-addr.arpa" {
+              type master;
+              file "/opt/dns/0.10.in-addr.arpa";
+          };
+
+cd /etc/bind
+cp db.local /opt/dns/company.prof
+cp db.l27 /opt/dns/0.10.in-addr.arpa
+
+vim /opt/dns/company.prof
+
+          
+
+vim /opt/dns/0.10.in-addr.arpa
+          
