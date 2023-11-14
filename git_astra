@@ -1,0 +1,37 @@
+ipa service-add-host --hosts=cicd-hq.company.prof HTTP/gitlab.company.prof
+ipa-getcert request -k /opt/gitca/git.key -f /opt/gitca/git.crt -N CN=gitlab.company.prof -D gitlab.company.prof -K HTTP/gitlab.company.prof
+
+apt install docker docker.io docker-compose -y
+
+cd /opt/gitlab/
+nano docker-compose.yml
+version: '3.6'
+services:
+  web:
+    image: 'gitlab/gitlab-ee:latest'
+    restart: always
+    hostname: 'gitlab.company.prof'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url   'https://gitlab.company.prof'
+        letsencrypt['enable'] = false
+        registry_external_url  'https://gitlab.company.prof:5050'
+        registry_nginx['ssl_certificate'] = "/opt/gitca/git.crt"
+        registry_nginx['ssl_certificate_key'] = "/opt/gitca/git.key"
+        nginx['ssl_certificate'] = "/opt/gitca/git.crt"
+        nginx['ssl_certificate_key'] = "/opt/gitca/git.key"
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - '80:80'
+      - '443:443'
+      - '5050:5050'
+      - '22:22'
+    volumes:
+      - '/etc/gitlabcer:/etc/gitlabcer'
+      - '$GITLAB_HOME/config:/etc/gitlab'
+      - '$GITLAB_HOME/logs:/var/log/gitlab'
+      - '$GITLAB_HOME/data:/var/opt/gitlab'
+    shm_size: '256m'
+docker-compose up -d
+docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
+
