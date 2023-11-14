@@ -1,0 +1,63 @@
+Чтобы предоставить доступ к GitLab пользователям Active Directory, выполните следующие шаги:
+
+1. Установите и настройте GitLab на вашем сервере. Если GitLab уже установлен, пропустите этот шаг.
+
+2. Убедитесь, что ваш сервер GitLab имеет доступ к Active Directory (AD) с помощью протокола LDAP.
+
+3. Откройте файл "gitlab.rb" с помощью текстового редактора на сервере:
+
+```shell
+sudo nano /etc/gitlab/gitlab.rb
+```
+
+4. Найдите и раскомментируйте следующие строки:
+
+```shell
+## OmniAuth секция
+## https://docs.gitlab.com/ee/integration/omniauth.html
+gitlab_rails['omniauth_enabled'] = true
+gitlab_rails['omniauth_allow_single_sign_on'] = ['saml']
+gitlab_rails['omniauth_auto_sign_in_with_provider'] = 'saml'
+```
+
+5. Добавьте следующие строки в файл "gitlab.rb", чтобы настроить параметры LDAP для взаимодействия с Active Directory:
+
+```shell
+## Omniauth-LDAP
+gitlab_rails['omniauth_block_auto_created_users'] = false
+gitlab_rails['omniauth_auto_link_ldap_user'] = true
+gitlab_rails['omniauth_providers'] = [
+  {
+    "name" => "ldap",
+    "label" => "AD LDAP",
+    "args" => {
+      "group_base" => "",
+      "provider" => "ldap",
+      "uid" => "sAMAccountName",
+      "base" => "<AD BASE DN>",
+      "method" => "ssl",
+      "bind_dn" => "<AD BIND DN>",
+      "password" => "<AD BIND DN PASSWORD>",
+      "port" => <AD LDAP PORT>,
+
+      "active_directory" => true,
+      "allow_username_or_email_login" => false,
+      "block_auto_created_users" => false
+    }
+  }
+]
+```
+Замените `<AD BASE DN>`, `<AD BIND DN>`, `<AD BIND DN PASSWORD>` и `<AD LDAP PORT>` на ваши значения. `<AD BASE DN>` - это базовый DN (Distinguished Name) вашей Active Directory, `<AD BIND DN>` - DN пользователя Active Directory с правами для доступа в AD (обычно что-то вроде `CN=Username,CN=Users,DC=example,DC=com`), `<AD BIND DN PASSWORD>` - пароль для указанного пользователя, `<AD LDAP PORT>` - порт LDAP вашей Active Directory.
+
+6. Сохраните и закройте файл.
+
+7. Перезапустите GitLab, чтобы применить изменения конфигурации:
+
+```shell
+sudo gitlab-ctl reconfigure
+sudo gitlab-ctl restart
+```
+
+8. После перезапуска GitLab будет возможность использовать Active Directory для аутентификации пользователей.
+
+Теперь пользователи Active Directory смогут использовать свои учетные данные для входа в GitLab.
